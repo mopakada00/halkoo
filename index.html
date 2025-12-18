@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>How might we?</title>
+
+<!-- Karla -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;600&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+  html, body {
+    height: 100vh;
+    height: 100dvh; /* Dynamic viewport height for mobile */
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  body {
+    font-family: 'Karla', system-ui, -apple-system, sans-serif;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .viewport {
+    overflow: hidden;
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+    position: relative;
+  }
+
+  .track {
+    display: flex;
+    gap: 16px;
+    transition: transform 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    will-change: transform;
+  }
+
+  .perspective {
+    perspective: 1200px;
+  }
+
+  .viewport {
+    --card-width: 220px;
+    --card-height: 320px;
+  }
+
+  .card {
+    width: var(--card-width);
+    height: var(--card-height);
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 1.2s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.3s ease, height 0.3s ease;
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 640px) {
+    .viewport {
+      --card-width: min(200px, calc(100vw - 48px));
+      --card-height: min(290px, calc((100vw - 48px) * 1.45));
+    }
+  }
+
+  .card.flipped {
+    transform: rotateY(180deg);
+  }
+
+  .face {
+    position: absolute;
+    inset: 0;
+    border-radius: 8px;
+    backface-visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    text-align: center;
+  }
+
+  .front {
+    background: white !important;
+    transform: rotateY(180deg);
+    font-size: 19px;
+    font-weight: 400;
+    color: #111;
+    line-height: 1.2;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 12px;
+  }
+
+  .front.pink,
+  .front.blue,
+  .front.yellow,
+  .front.orange {
+    background: white !important;
+  }
+
+
+  .card-question {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 clamp(14px, 4vw, 24px);
+  }
+
+  .card-category-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(8px, 2vw, 12px);
+    width: 100%;
+    background: transparent !important;
+  }
+
+  .card-category-wrapper.pink,
+  .card-category-wrapper.blue,
+  .card-category-wrapper.yellow,
+  .card-category-wrapper.orange {
+    background: transparent !important;
+  }
+
+  .category-line {
+    flex: 1;
+    height: 1px;
+    max-width: 40px;
+  }
+
+  .card-category-wrapper.pink .category-line {
+    background-color: #eb9db7;
+  }
+
+  .card-category-wrapper.blue .category-line {
+    background-color: #9db7eb;
+  }
+
+  .card-category-wrapper.yellow .category-line {
+    background-color: #f0d97c;
+  }
+
+  .card-category-wrapper.orange .category-line {
+    background-color: #eea776;
+  }
+
+  .card-category {
+    font-size: 14px;
+    font-weight: 400;
+    color: #525252;
+    text-align: center;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+  }
+
+  /* category colors */
+  .pink {
+    background: linear-gradient(135deg, #f5b6cc, #eb9db7);
+  }
+  .blue {
+    background: linear-gradient(135deg, #b6ccf5, #9db7eb);
+  }
+  .yellow {
+    background: linear-gradient(135deg, #f4e4a6, #f0d97c);
+  }
+  .orange {
+    background: linear-gradient(135deg, #f6c29f, #eea776);
+  }
+
+  /* Select styling */
+  #category {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    padding-right: 40px;
+  }
+</style>
+</head>
+
+<body class="bg-stone-100 flex justify-center px-4 py-4 sm:py-8">
+
+<main class="w-full max-w-sm flex flex-col h-full justify-between py-2 sm:py-4 mx-auto">
+
+  <!-- HEADER -->
+  <header class="text-center space-y-2 flex-shrink-0 mb-4 sm:mb-6">
+    <h1 style="font-size:46px; font-weight:600; line-height:1.1; letter-spacing:-0.05em;">
+      How might we?
+    </h1>
+    <p style="font-size:16px; font-weight:400; letter-spacing:-0.02em; color:#525252;">
+      Kreatywne pytania, które pomagają spojrzeć na problem z nowej perspektywy.
+    </p>
+
+    <select id="category"
+      style="font-size:14px; font-weight:400;"
+      class="w-full border rounded-xl px-4 py-4">
+      <option value="all">🎲 Wszystkie pytania</option>
+      <option value="problem">🧠 Zrozumieć problem</option>
+      <option value="perspective">🔄 Zmienić perspektywę</option>
+      <option value="ease">🚀 Ułatwić sobie życie</option>
+      <option value="action">🎯 Ruszyć do przodu</option>
+    </select>
+  </header>
+
+  <!-- CARDS -->
+  <div class="viewport perspective">
+    <div id="track" class="track"></div>
+  </div>
+
+  <!-- BUTTON -->
+  <button onclick="drawCard()"
+    style="font-size:19px; font-weight:600;"
+    class="w-full py-4 rounded-full bg-pink-950 text-white flex-shrink-0 mt-4 sm:mt-6">
+    Losuj pytanie
+  </button>
+
+</main>
+
+<script>
+const categories = {
+  problem: {
+    color: "pink",
+    name: "Zrozumieć problem",
+    questions: [
+      "Co tak naprawdę tutaj nie działa?",
+      "Jaki problem próbujemy rozwiązać?",
+      "Gdzie pojawia się największa trudność?",
+      "Co jest tu bardziej skomplikowane niż powinno?",
+      "Co dokładnie powoduje frustrację?",
+      "Co jest objawem, a co prawdziwym problemem?",
+      "Dlaczego to w ogóle jest problem?",
+      "Co działa gorzej, niż się spodziewaliśmy?"
+    ]
+  },
+  perspective: {
+    color: "blue",
+    name: "Zmienić perspektywę",
+    questions: [
+      "Jak spojrzałby na to ktoś z zewnątrz?",
+      "Co byśmy zrobili, gdyby nie było żadnych ograniczeń?",
+      "Jak wyglądałoby to, gdybyśmy zaczęli od zera?",
+      "Jak wyglądałaby najprostsza wersja tego rozwiązania?",
+      "Co by się zmieniło, gdyby to nie było takie ważne?",
+      "Jak wyglądałby najgorszy możliwy scenariusz?",
+      "Jak wyglądałby idealny scenariusz?",
+      "Jak ktoś inny mógłby to rozwiązać?"
+    ]
+  },
+  ease: {
+    color: "yellow",
+    name: "Ułatwić sobie życie",
+    questions: [
+      "Jak można to uprościć?",
+      "Co można usunąć zamiast dodawać?",
+      "Jak zrobić to mniejszym wysiłkiem?",
+      "Jak można to zrobić szybciej?",
+      "Co sprawia, że to jest trudne?",
+      "Jak mogłoby to być mniej męczące?",
+      "Jak zrobić to bardziej intuicyjnie?",
+      "Co można zautomatyzować lub pominąć?"
+    ]
+  },
+  action: {
+    color: "orange",
+    name: "Ruszyć do przodu",
+    questions: [
+      "Jaki jest najmniejszy możliwy krok?",
+      "Co można zrobić już dziś?",
+      "Co stanie się, jeśli nic nie zrobimy?",
+      "Jaka decyzja da najwięcej efektu?",
+      "Od czego najlepiej zacząć?",
+      "Co można przetestować bez dużego ryzyka?",
+      "Jaki ruch odblokuje kolejne kroki?",
+      "Co możemy zrobić w 10 minut?"
+    ]
+  }
+};
+
+const track = document.getElementById("track");
+const select = document.getElementById("category");
+let cards = [];
+
+function buildCards() {
+  track.innerHTML = "";
+  cards = [];
+
+  const selected = select.value;
+  const source = selected === "all"
+    ? Object.values(categories)
+    : [categories[selected]];
+
+  source.forEach(cat => {
+    cat.questions.forEach(q => {
+      const card = document.createElement("div");
+      card.className = `card ${cat.color}`;
+
+      card.innerHTML = `
+        <div class="face ${cat.color}"></div>
+        <div class="face front ${cat.color}">
+          <div class="card-question">${q}</div>
+          <div class="card-category-wrapper ${cat.color}">
+            <span class="category-line"></span>
+            <span class="card-category">${cat.name}</span>
+            <span class="category-line"></span>
+          </div>
+        </div>
+      `;
+
+      track.appendChild(card);
+      cards.push(card);
+    });
+  });
+
+  // Function to scale cards based on available space
+  function scaleCards() {
+    const viewport = document.querySelector(".viewport");
+    if (!viewport) return;
+
+    const viewportHeight = viewport.offsetHeight;
+    const viewportWidth = viewport.offsetWidth;
+    
+    if (viewportHeight === 0 || viewportWidth === 0) return;
+
+    // Base card dimensions
+    const baseWidth = 220;
+    const baseHeight = 320;
+    const aspectRatio = baseHeight / baseWidth; // height/width ratio
+
+    // Calculate optimal size based on available height
+    // Leave some padding (about 40px total)
+    const availableHeight = Math.max(viewportHeight - 40, 200); // Min 200px available
+    const maxHeight = availableHeight;
+    
+    // Calculate max width, but respect viewport width
+    const maxWidth = Math.min(280, viewportWidth - 48);
+    const minWidth = 160; // Minimum card width
+    
+    // Start with height-based calculation
+    let cardHeight = Math.min(maxHeight, 420); // Max height 420px
+    let cardWidth = cardHeight / aspectRatio;
+    
+    // If calculated width exceeds max width, scale down based on width
+    if (cardWidth > maxWidth) {
+      cardWidth = maxWidth;
+      cardHeight = cardWidth * aspectRatio;
+    }
+    
+    // If calculated height exceeds available height, scale down
+    if (cardHeight > maxHeight) {
+      cardHeight = maxHeight;
+      cardWidth = cardHeight / aspectRatio;
+    }
+    
+    // Ensure minimum size
+    if (cardWidth < minWidth) {
+      cardWidth = minWidth;
+      cardHeight = cardWidth * aspectRatio;
+    }
+    
+    // Final check: if height still exceeds available space, scale down further
+    if (cardHeight > maxHeight) {
+      cardHeight = maxHeight;
+      cardWidth = cardHeight / aspectRatio;
+    }
+
+    // Set CSS custom properties
+    viewport.style.setProperty('--card-width', `${cardWidth}px`);
+    viewport.style.setProperty('--card-height', `${cardHeight}px`);
+  }
+
+  // Function to position cards
+  function positionCards() {
+    if (cards.length === 0) {
+      track.style.transform = "translateX(0)";
+      return;
+    }
+
+    const viewport = document.querySelector(".viewport");
+    if (!viewport) return;
+
+    const viewportWidth = viewport.offsetWidth || 300; // Fallback width
+    
+    // Force a reflow to ensure cards are measured
+    void viewport.offsetHeight;
+    
+    // Check if cards are measured
+    const firstCard = cards[0];
+    if (!firstCard) return;
+
+    // Try to get card width, with multiple attempts
+    let cardWidth = firstCard.offsetWidth;
+    if (cardWidth === 0) {
+      // Force layout calculation
+      firstCard.style.display = 'block';
+      cardWidth = firstCard.offsetWidth || 220; // Fallback to default card width
+    }
+
+    const gap = 16;
+    const totalCardWidth = cardWidth + gap;
+    
+    // Center the first card in the viewport
+    const offset = (viewportWidth / 2) - (totalCardWidth / 2);
+    track.style.transform = `translateX(${offset}px)`;
+  }
+
+  // Wait for layout to complete before calculating positions
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      scaleCards();
+      positionCards();
+      
+      // Additional fallback after a short delay
+      setTimeout(() => {
+        scaleCards();
+        positionCards();
+      }, 50);
+      
+      // Final fallback
+      setTimeout(() => {
+        scaleCards();
+        positionCards();
+      }, 200);
+    });
+  });
+}
+
+// Wait for DOM to be ready and ensure cards are visible
+function initializeCards() {
+  buildCards();
+  // Ensure cards are scaled and positioned after a brief delay to account for any rendering
+  setTimeout(() => {
+    if (cards.length > 0) {
+      scaleCards();
+      positionCards();
+    }
+  }, 100);
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeCards);
+} else {
+  initializeCards();
+}
+
+select.addEventListener("change", () => {
+  buildCards();
+  // Scale cards after rebuilding
+  setTimeout(() => {
+    scaleCards();
+    positionCards();
+  }, 100);
+});
+
+// Recalculate on resize for mobile orientation changes
+let resizeTimeout;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimeout);
+  resizeTimeout = setTimeout(() => {
+    scaleCards();
+    positionCards();
+  }, 250);
+});
+
+function drawCard() {
+  if (!cards.length) return;
+
+  // Smoothly unflip all cards first
+  cards.forEach(c => c.classList.remove("flipped"));
+  
+  // Wait for unflip animation to complete before moving
+  setTimeout(() => {
+    const picked = cards[Math.floor(Math.random() * cards.length)];
+    const index = cards.indexOf(picked);
+
+    // Ensure layout is complete before calculating
+    requestAnimationFrame(() => {
+      const viewportWidth = document.querySelector(".viewport").offsetWidth;
+      const cardWidth = picked.offsetWidth + 16;
+
+      const offset =
+        (index * cardWidth) - (viewportWidth / 2) + (cardWidth / 2);
+
+      track.style.transform = `translateX(${-offset}px)`;
+
+      setTimeout(() => {
+        picked.classList.add("flipped");
+      }, 1000);
+    });
+  }, 200);
+}
+</script>
+
+</body>
+</html>
