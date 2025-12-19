@@ -38,7 +38,7 @@
   .track {
     display: flex;
     gap: 16px;
-    transition: transform 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transition: transform 1.8s cubic-bezier(0.4, 0, 0.2, 1);
     will-change: transform;
   }
 
@@ -56,7 +56,7 @@
     height: var(--card-height);
     position: relative;
     transform-style: preserve-3d;
-    transition: transform 1.2s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.3s ease, height 0.3s ease;
+    transition: transform 1.6s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s ease, height 0.3s ease;
     border-radius: 8px;
     flex-shrink: 0;
   }
@@ -95,7 +95,7 @@
     overflow-wrap: break-word;
     flex-direction: column;
     justify-content: space-between;
-    padding: 12px;
+    padding: 20px;
   }
 
   .front.pink,
@@ -132,8 +132,7 @@
 
   .category-line {
     flex: 1;
-    height: 1px;
-    max-width: 40px;
+    height: 3px;
   }
 
   .card-category-wrapper.pink .category-line {
@@ -164,20 +163,25 @@
   /* category colors */
   .pink {
     background: linear-gradient(135deg, #f5b6cc, #eb9db7);
+    background-image: url(assets/pinkbg.jpg);
   }
   .blue {
     background: linear-gradient(135deg, #b6ccf5, #9db7eb);
+    background-image: url(assets/bluebg.jpg);
   }
   .yellow {
     background: linear-gradient(135deg, #f4e4a6, #f0d97c);
+    background-image: url(assets/yellowbg.jpg);
   }
   .orange {
     background: linear-gradient(135deg, #f6c29f, #eea776);
+    background-image: url(assets/orangebg.jpg);
   }
 
   /* Select styling */
   #category {
     appearance: none;
+    background-color: #fafafa;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 16px center;
@@ -191,23 +195,33 @@
 <main class="w-full max-w-sm flex flex-col h-full justify-between py-2 sm:py-4 mx-auto">
 
   <!-- HEADER -->
-  <header class="text-center space-y-2 flex-shrink-0 mb-4 sm:mb-6">
+  <header class="text-center space-y-5 flex-shrink-0 mb-5 sm:mb-6">
+    <div class="space-y-2">
+    <div class="items-center w-md">
+      <img class="items-center w-md"
+      src="assets/logo.png">
+    </div>
     <h1 style="font-size:46px; font-weight:600; line-height:1.1; letter-spacing:-0.05em;">
       How might we?
     </h1>
-    <p style="font-size:16px; font-weight:400; letter-spacing:-0.02em; color:#525252;">
+    <p style="font-size:16px; font-weight:400; letter-spacing:-0.02em; color:#525252; line-height:1.2;">
       Kreatywne pytania, które pomagają spojrzeć na problem z nowej perspektywy.
     </p>
+    </div>
 
-    <select id="category"
-      style="font-size:14px; font-weight:400;"
-      class="w-full border rounded-xl px-4 py-4">
-      <option value="all">🎲 Wszystkie pytania</option>
-      <option value="problem">🧠 Zrozumieć problem</option>
-      <option value="perspective">🔄 Zmienić perspektywę</option>
-      <option value="ease">🚀 Ułatwić sobie życie</option>
-      <option value="action">🎯 Ruszyć do przodu</option>
-    </select>
+    <div class="text-left"> 
+      <label class="block mb-1 text-[14px] font-semibold text-gray-700">
+        Wybierz kategorię pytań:
+      </label>
+      <select id="category" class="w-full border border-gray-300 rounded-md px-2 py-2">
+        <option value="all">🎲 Wszystkie pytania</option>
+        <option value="problem">🧠 Zrozumieć problem</option>
+        <option value="perspective">🔄 Zmienić perspektywę</option>
+        <option value="ease">🚀 Ułatwić sobie życie</option>
+        <option value="action">🎯 Ruszyć do przodu</option>
+      </select>
+    </div>
+>>>>>>> 3a7e73f (Moja pierwsza aktualizacja kodu)
   </header>
 
   <!-- CARDS -->
@@ -305,6 +319,9 @@ function buildCards() {
       card.innerHTML = `
         <div class="face ${cat.color}"></div>
         <div class="face front ${cat.color}">
+          <div class="card-category-wrapper ${cat.color}">
+            <span class="category-line"></span>
+          </div>
           <div class="card-question">${q}</div>
           <div class="card-category-wrapper ${cat.color}">
             <span class="category-line"></span>
@@ -492,9 +509,94 @@ function drawCard() {
 
       setTimeout(() => {
         picked.classList.add("flipped");
-      }, 1000);
+      }, 1200);
     });
-  }, 200);
+  }, 300);
+}
+
+// Touch/swipe functionality to draw cards
+let touchStartX = 0;
+let touchEndX = 0;
+let isDragging = false;
+let dragStartX = 0;
+let currentTransform = 0;
+
+function getCurrentTransform() {
+  const trackElement = document.getElementById("track");
+  if (!trackElement) return 0;
+  const transform = trackElement.style.transform;
+  const match = transform.match(/translateX\((-?\d+\.?\d*)px\)/);
+  return match ? parseFloat(match[1]) : 0;
+}
+
+function handleTouchStart(e) {
+  touchStartX = e.touches ? e.touches[0].clientX : e.clientX;
+  dragStartX = touchStartX;
+  currentTransform = getCurrentTransform();
+  isDragging = true;
+  const trackElement = document.getElementById("track");
+  if (trackElement) {
+    trackElement.style.transition = 'none';
+  }
+}
+
+function handleTouchMove(e) {
+  if (!isDragging) return;
+  
+  const currentX = e.touches ? e.touches[0].clientX : e.clientX;
+  const diff = currentX - dragStartX;
+  const newTransform = currentTransform + diff;
+  const trackElement = document.getElementById("track");
+  if (trackElement) {
+    trackElement.style.transform = `translateX(${newTransform}px)`;
+  }
+}
+
+function handleTouchEnd(e) {
+  if (!isDragging) return;
+  
+  isDragging = false;
+  const trackElement = document.getElementById("track");
+  if (trackElement) {
+    trackElement.style.transition = 'transform 1.8s cubic-bezier(0.4, 0, 0.2, 1)';
+  }
+  
+  touchEndX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
+  const swipeDistance = touchEndX - touchStartX;
+  const swipeThreshold = 50; // Minimum swipe distance
+  
+  // If swiped significantly, draw a new card
+  if (Math.abs(swipeDistance) > swipeThreshold) {
+    drawCard();
+  } else {
+    // Otherwise, snap back to current position
+    positionCards();
+  }
+}
+
+// Initialize swipe functionality after DOM is ready
+function initSwipe() {
+  const viewport = document.querySelector(".viewport");
+  if (viewport) {
+    viewport.addEventListener('touchstart', handleTouchStart, { passive: true });
+    viewport.addEventListener('touchmove', handleTouchMove, { passive: true });
+    viewport.addEventListener('touchend', handleTouchEnd, { passive: true });
+    
+    // Also support mouse drag for desktop
+    viewport.addEventListener('mousedown', handleTouchStart);
+    viewport.addEventListener('mousemove', (e) => {
+      if (isDragging) handleTouchMove(e);
+    });
+    viewport.addEventListener('mouseup', handleTouchEnd);
+    viewport.addEventListener('mouseleave', handleTouchEnd);
+  }
+}
+
+// Initialize swipe when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initSwipe);
+} else {
+  initSwipe();
 }
 </script>
 
