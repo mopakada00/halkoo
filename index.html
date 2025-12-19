@@ -11,197 +11,64 @@
 <link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;600&display=swap" rel="stylesheet">
 
 <script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="style.css">
 
-<style>
-  html, body {
-    height: 100vh;
-    height: 100dvh; /* Dynamic viewport height for mobile */
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-  }
-
-  body {
-    font-family: 'Karla', system-ui, -apple-system, sans-serif;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .viewport {
-    overflow: hidden;
-    width: 100%;
-    flex: 1;
-    min-height: 0;
-    position: relative;
-  }
-
-  .track {
-    display: flex;
-    gap: 16px;
-    transition: transform 1.8s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: transform;
-  }
-
-  .perspective {
-    perspective: 1200px;
-  }
-
-  .viewport {
-    --card-width: 220px;
-    --card-height: 320px;
-  }
-
-  .card {
-    width: var(--card-width);
-    height: var(--card-height);
-    position: relative;
-    transform-style: preserve-3d;
-    transition: transform 1.6s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s ease, height 0.3s ease;
-    border-radius: 8px;
-    flex-shrink: 0;
-  }
-
-  @media (max-width: 640px) {
-    .viewport {
-      --card-width: min(200px, calc(100vw - 48px));
-      --card-height: min(290px, calc((100vw - 48px) * 1.45));
-    }
-  }
-
-  .card.flipped {
-    transform: rotateY(180deg);
-  }
-
-  .face {
-    position: absolute;
-    inset: 0;
-    border-radius: 8px;
-    backface-visibility: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-    text-align: center;
-  }
-
-  .front {
-    background: white !important;
-    transform: rotateY(180deg);
-    font-size: 19px;
-    font-weight: 400;
-    color: #111;
-    line-height: 1.2;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 20px;
-  }
-
-  .front.pink,
-  .front.blue,
-  .front.yellow,
-  .front.orange {
-    background: white !important;
-  }
-
-
-  .card-question {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 clamp(14px, 4vw, 24px);
-  }
-
-  .card-category-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: clamp(8px, 2vw, 12px);
-    width: 100%;
-    background: transparent !important;
-  }
-
-  .card-category-wrapper.pink,
-  .card-category-wrapper.blue,
-  .card-category-wrapper.yellow,
-  .card-category-wrapper.orange {
-    background: transparent !important;
-  }
-
-  .category-line {
-    flex: 1;
-    height: 3px;
-  }
-
-  .card-category-wrapper.pink .category-line {
-    background-color: #eb9db7;
-  }
-
-  .card-category-wrapper.blue .category-line {
-    background-color: #9db7eb;
-  }
-
-  .card-category-wrapper.yellow .category-line {
-    background-color: #f0d97c;
-  }
-
-  .card-category-wrapper.orange .category-line {
-    background-color: #eea776;
-  }
-
-  .card-category {
-    font-size: 14px;
-    font-weight: 400;
-    color: #525252;
-    text-align: center;
-    letter-spacing: -0.01em;
-    white-space: nowrap;
-  }
-
-  /* category colors */
-  .pink {
-    background: linear-gradient(135deg, #f5b6cc, #eb9db7);
-    background-image: url(assets/pinkbg.jpg);
-  }
-  .blue {
-    background: linear-gradient(135deg, #b6ccf5, #9db7eb);
-    background-image: url(assets/bluebg.jpg);
-  }
-  .yellow {
-    background: linear-gradient(135deg, #f4e4a6, #f0d97c);
-    background-image: url(assets/yellowbg.jpg);
-  }
-  .orange {
-    background: linear-gradient(135deg, #f6c29f, #eea776);
-    background-image: url(assets/orangebg.jpg);
-  }
-
-  /* Select styling */
-  #category {
-    appearance: none;
-    background-color: #fafafa;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 16px center;
-    padding-right: 40px;
-  }
-</style>
 </head>
 
-<body class="bg-stone-100 flex justify-center px-4 py-4 sm:py-8">
+<body class="bg-[#F9F5F1] flex justify-center px-4 py-4 sm:py-8">
+
+  <div
+  id="welcome-modal"
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md hidden"
+>
+  <div
+    class="bg-white rounded-2xl max-w-sm w-[90%] shadow-2xl overflow-hidden"
+  >
+    <!-- HEADER: OBRAZEK 3:1 -->
+    <div class="w-full aspect-[3/1]">
+      <img
+        src="assets/modalpic.png"
+        alt="Welcome"
+        class="w-full h-full object-cover"
+      />
+    </div>
+
+    <!-- CONTENT -->
+    <div class="p-6 text-center">
+      <h2 class="text-[28px] font-semibold tracking-tight mb-4 text-gray-900">
+        Witaj w "How Might We?"
+      </h2>
+
+      <div
+        class="text-gray-600 space-y-4 mb-8 text-left text-[14px] tracking-normal leading-5"
+      >
+        <p>
+          Ta aplikacja to Twoje narzędzie do
+          <strong>kreatywnego rozwiązywania problemów</strong>.
+        </p>
+        <ul class="list-decimal pl-5 space-y-2">
+          <li>Wybierz kategorię, która Cię interesuje.</li>
+          <li>Wylosuj kartę z pytaniem za pomocą przycisku lub przewinięcia palcem.</li>
+          <li>Spójrz na swoje wyzwanie z zupełnie innej perspektywy.</li>
+        </ul>
+      </div>
+
+      <button
+        onclick="closeModal()"
+        class="w-full py-3 bg-pink-950 text-white font-semibold rounded-full hover:bg-pink-900 transition-colors"
+      >
+        Zaczynamy!
+      </button>
+    </div>
+  </div>
+</div>
 
 <main class="w-full max-w-sm flex flex-col h-full justify-between py-2 sm:py-4 mx-auto">
 
   <!-- HEADER -->
   <header class="text-center space-y-5 flex-shrink-0 mb-5 sm:mb-6">
     <div class="space-y-2">
-    <div class="items-center w-md">
-      <img class="items-center w-md"
-      src="assets/logo.png">
-    </div>
-    <h1 style="font-size:46px; font-weight:600; line-height:1.1; letter-spacing:-0.05em;">
+    <h1 style="font-size:50px; font-weight:600; line-height:1.1; letter-spacing:-0.05em;">
       How might we?
     </h1>
     <p style="font-size:16px; font-weight:400; letter-spacing:-0.02em; color:#525252; line-height:1.2;">
@@ -211,7 +78,7 @@
 
     <div class="text-left"> 
       <label class="block mb-1 text-[14px] font-semibold text-gray-700">
-        Wybierz kategorię pytań:
+        Kategoria pytań
       </label>
       <select id="category" class="w-full border border-gray-300 rounded-md px-2 py-2">
         <option value="all">🎲 Wszystkie pytania</option>
@@ -221,7 +88,6 @@
         <option value="action">🎯 Ruszyć do przodu</option>
       </select>
     </div>
->>>>>>> 3a7e73f (Moja pierwsza aktualizacja kodu)
   </header>
 
   <!-- CARDS -->
@@ -232,7 +98,7 @@
   <!-- BUTTON -->
   <button onclick="drawCard()"
     style="font-size:19px; font-weight:600;"
-    class="w-full py-4 rounded-full bg-pink-950 text-white flex-shrink-0 mt-4 sm:mt-6">
+    class="w-full py-4 rounded-full bg-[#570301] text-white flex-shrink-0 mt-4 sm:mt-6">
     Losuj pytanie
   </button>
 
@@ -598,6 +464,21 @@ if (document.readyState === 'loading') {
 } else {
   initSwipe();
 }
+
+function checkFirstVisit() {
+  const hasVisited = localStorage.getItem('hasVisitedHMW');
+  if (!hasVisited) {
+    document.getElementById('welcome-modal').classList.remove('hidden');
+  }
+}
+
+function closeModal() {
+  document.getElementById('welcome-modal').classList.add('hidden');
+  localStorage.setItem('hasVisitedHMW', 'true');
+}
+
+// Uruchom sprawdzenie po załadowaniu strony
+window.addEventListener('DOMContentLoaded', checkFirstVisit);
 </script>
 
 </body>
